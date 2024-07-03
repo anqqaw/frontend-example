@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:9000/api/fetch-json');
+        setData(response.data);
+        setLoading(false);
+      } catch(e) {
+        setError(e);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  return(
+    <div className='App'>
+      <h1>DATA</h1>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
-  );
+  )
 }
 
 export default App;
